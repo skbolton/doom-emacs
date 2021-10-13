@@ -20,6 +20,8 @@
 (package! nano-modeline
 :recipe (:host github :repo "rougier/nano-modeline"))
 
+(package! mu4e-alert :disable t)
+
 (unpin! org-roam)
 (package! websocket)
 (package! org-roam-ui :recipe (:host github :repo "org-roam/org-roam-ui" :files ("*.el" "out")))
