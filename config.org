@@ -6,8 +6,16 @@ This org file is being tangled into the =config.el= file. By default all the blo
 Add =:tangle no= to a code block to prevent it from going to the config file.
 * UI Elements
 ** Themeing
-Nano emacs stuff
+
 #+begin_src emacs-lisp
+(setq
+ doom-theme 'doom-city-lights
+ doom-font (font-spec :family "Operator Mono Book" :size 16)
+ doom-variable-pitch-font (font-spec :family "Roboto Slab"))
+#+end_src
+
+Old themeing stuff. This gives emacs a much more minimal looks that I might go back to.
+#+begin_src emacs-lisp :tangle no
 (use-package! nano-theme
   :config
   (nano-mode)
