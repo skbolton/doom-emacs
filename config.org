@@ -34,10 +34,23 @@ Minimap, filetree, line numbers etc
 The reason I am doing all this in the first place right?
 
 #+begin_src emacs-lisp
-(setq org-directory "~/Documents/org/")
+(setq org-directory "~/Documents/Delta/")
+
+(advice-add 'org-refile :after 'org-save-all-org-buffers)
 
 (after! org
-  (setq org-agenda-files '("~/Documents/org")))
+  (setq org-agenda-files (mapcar
+                          ;; concatenate the path of my org directory to make defining paths easier
+                          (lambda (suffix) (concat org-directory suffix ".org"))
+                          (list "inbox" "agenda" "finance" "health" "character" "career" "home" "GB/gb"))
+        org-todo-keywords '((sequence "IDEA(i)" "PROJECT(p)" "TODO(t)" "NEXT(n)" "WAIT(w)" "BLOCKED(b)" "|" "DONE(d)" "CANCEL(c)"))
+        org-todo-keyword-faces '(("IDEA" . "#EBBF83") ("PROJECT" . "#70E1E8") ("TODO" . "#EBBF83") ("NEXT" . "#8BD49C") ("BLOCKED" . "#D98E48") ("WAIT" . "#41505E") ("CANCEL" . "#D95468"))
+        org-ellipsis " ▶"
+        org-agenda-start-with-log-mode t
+        org-log-done 'time
+        org-log-into-drawer t
+        org-refile-targets org-agenda-files
+        org-refile-allow-creating-parent-nodes t))
 
 (use-package! org-superstar
   :custom
@@ -45,36 +58,37 @@ The reason I am doing all this in the first place right?
 
 (use-package! org-roam
   :custom
-  (org-roam-directory "~/Documents/org/Spells"))
+  (org-roam-directory (concat org-directory "Spells")))
 
 (use-package! websocket
   :after org-roam)
 
 (use-package! org-roam-ui
-    :after org-roam ;; or :after org
-;;         normally we'd recommend hooking orui after org-roam, but since org-roam does not have
-;;         a hookable mode anymore, you're advised to pick something yourself
-;;         if you don't care about startup time, use
-;;  :hook (after-init . org-roam-ui-mode)
-    :config
-    (setq org-roam-ui-sync-theme t)
-    (setq org-roam-ui-follow t)
-    (setq org-roam-ui-update-on-save t)
-    (setq org-roam-ui-open-on-start t)
-    (setq org-roam-ui-custom-theme
+  :after org-roam ;; or :after org
+  ;;         normally we'd recommend hooking orui after org-roam, but since org-roam does not have
+  ;;         a hookable mode anymore, you're advised to pick something yourself
+  ;;         if you don't care about startup time, use
+  ;;  :hook (after-init . org-roam-ui-mode)
+  :config
+  (setq org-roam-ui-sync-theme t)
+  (setq org-roam-ui-follow t)
+  (setq org-roam-ui-update-on-save t)
+  (setq org-roam-ui-open-on-start t)
+  (setq org-roam-ui-custom-theme
         '((bg . "#1C1E31")
-        (bg-alt . "#100E23")
-        (fg . "#CBE3E7")
-        (fg-alt . "#8A889D")
-        (red . "#F48FB1")
-        (orange . "#F2B482")
-        (yellow . "#FFE6B3")
-        (green . "#A1EFD3")
-        (cyan . "#63F2F1")
-        (blue . "#91ddff")
-        (violet . "#D4BFFF")
-        (magenta . "#F02E6E"))))
+          (bg-alt . "#100E23")
+          (fg . "#CBE3E7")
+          (fg-alt . "#8A889D")
+          (red . "#F48FB1")
+          (orange . "#F2B482")
+          (yellow . "#FFE6B3")
+          (green . "#A1EFD3")
+          (cyan . "#63F2F1")
+          (blue . "#91ddff")
+          (violet . "#D4BFFF")
+          (magenta . "#F02E6E"))))
 #+end_src
+
 * Email Stuff
 #+begin_src emacs-lisp
 (setq user-full-name "Stephen Bolton"
