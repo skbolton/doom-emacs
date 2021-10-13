@@ -4,7 +4,17 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(safe-local-variable-values
-   '((org-roam-db-location . "~Documents/GenesisBlock/org-roam.db")
+   '((org-roam-db-location . "~/Documents/Delta/GB/wiki/org-roam.db")
+     (org-roam-directory . "~/Documents/Delta/GB/wiki")
+     (org-roam-db-location . "~/Documents/org/GB/wiki/org-roam.db")
+     (org-roam-directory . "~/Documents/org/GB/wiki")
+     (org-roam-db-location
+      (concat org-roam-directory "GB/wiki/org-roam.db"))
+     (org-roam-directory
+      (concat org-roam-directory "GB/wiki"))
+     (org-roam-db-location concat org-roam-directory "GB/wiki/org-roam.db")
+     (org-roam-directory concat org-roam-directory "GB/wiki")
+     (org-roam-db-location . "~Documents/GenesisBlock/org-roam.db")
      (org-roam-directory . "~/Documents/GenesisBlock")
      (org-roam-directory expand-file-name "./")
      (org-roam-db-location expand-file-name "./org-roam.db")
