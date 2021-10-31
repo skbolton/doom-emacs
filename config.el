@@ -70,40 +70,57 @@
           (violet . "#D4BFFF")
           (magenta . "#F02E6E"))))
 
-(setq user-full-name "Stephen Bolton"
-      user-mail-address "stephen@bitsonthemind.com")
+;; (setq user-full-name "Stephen Bolton"
+;;       user-mail-address "stephen@bitsonthemind.com")
 
-;; (use-package! mu4e
-;;   :config
-;;   (setq mu4e-change-filenames-when-moving t)
-;;   ;; Refresh mail every 10 mins
-;;   (setq mu4e-update-interval (* 10 60))
-;;   (setq mu4e-get-mail-command "mbsync -c ~/.config/mbsync/.mbsyncrc -a")
-;;   (setq mu4e-root-maildir "~/Mail")
-;;   (setq mu4e-contexts
-;;    (list
-;;     ;; Genesis Block
-;;     (make-mu4e-context
-;;      :name "Genesis Block"
-;;      :match-func
-;;        (lambda (msg)
-;;          (when msg
-;;            (string-prefix-p "/GB" (mu4e-message-field msg :maildir))))
-;;        :vars '((user-mail-address . "stephen@genesisblock.com")
-;;                (user-full-name . "Stephen Bolton")
-;;                (mu4e-drafts-folder . "/GB/Drafts")
-;;                (mu4e-sent-folder . "/GB/Sent")
-;;                (mu4e-refile-folder . "/GB/Archive")
-;;                (mu4e-trash-folder . "/GB/Trash")))
-;;     ;; BOTM
-;;     (make-mu4e-context
-;;      :name "BOTM"
-;;      :match-func
-;;        (lambda (msg)
-;;          (when msg
-;;            (string-prefix-p "/BOTM" (mu4e-message-field msg :maildir))))
-;;        :vars '((user-mail-address . "stephen@bitsonthemind.com")
-;;                (user-full-name . "Stephen Bolton")
-;;                (mu4e-drafts-folder . "/BOTM/Drafts")
-;;                (mu4e-sent-folder . "/BOTM/Sent")
-;;                (mu4e-refile-folder . "/BOTM/Archive"))))))
+(auth-source-pass-enable)
+(setq auth-sources '(password-store))
+
+(use-package! mu4e
+  :config
+  ;; (setq message-send-mail-function 'smtpmail-send-it)
+  (setq mu4e-change-filenames-when-moving t)
+  ;; Refresh mail every 10 mins
+  (setq mu4e-update-interval (* 10 60))
+  (setq mu4e-get-mail-command "mbsync -c ~/.config/mbsync/.mbsyncrc -a")
+  (setq mu4e-root-maildir "~/.local/share/Mail")
+  (setq mu4e-context-policy 'ask)
+  (setq mu4e-contexts
+   (list
+    ;; Genesis Block
+    (make-mu4e-context
+     :name "Genesis Block"
+     :match-func
+       (lambda (msg)
+         (when msg
+           (string-prefix-p "/GB" (mu4e-message-field msg :maildir))))
+       :vars '((user-mail-address . "stephen@genesisblock.com")
+               (user-full-name "Stephen Bolton")
+               (smtpmail-default-smtp-server . "smtp.gmail.com")
+               (smtpmail-smtp-user . "stephen@genesisblock.com")
+               (smtpmail-smtp-server . "smtp.gmail.com")
+               (smtpmail-smtp-service . 465)
+               (smtpmail-stream-type . ssl)
+               (user-full-name . "Stephen Bolton")
+               (mu4e-drafts-folder . "/GB/Drafts")
+               (mu4e-sent-folder . "/GB/Sent")
+               (mu4e-refile-folder . "/GB/Archive")
+               (mu4e-trash-folder . "/GB/Trash")))
+    ;; BOTM
+    (make-mu4e-context
+     :name "BOTM"
+     :match-func
+       (lambda (msg)
+         (when msg
+           (string-prefix-p "/BOTM" (mu4e-message-field msg :maildir))))
+       :vars '((user-mail-address . "stephen@bitsonthemind.com")
+               (user-full-name . "Stephen Bolton")
+               (smtpmail-default-smtp-server . "smtp.fastmail.com")
+               (smtpmail-smtp-server . "smtp.fastmail.com")
+               (smtpmail-smtp-user . "stephen@bitsonthemind.com")
+               (smtpmail-smtp-service . 465)
+               (smtpmail-stream-type . ssl)
+               (mu4e-drafts-folder . "/BOTM/Drafts")
+               (mu4e-sent-folder . "/BOTM/Sent")
+               (mu4e-trash-folder . "/BOTM/Trash")
+               (mu4e-refile-folder . "/BOTM/Archive"))))))
