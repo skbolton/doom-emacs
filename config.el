@@ -1,46 +1,63 @@
 (setq
- doom-theme 'doom-city-lights
- doom-font (font-spec :family "Operator Mono Book" :size 16)
- doom-variable-pitch-font (font-spec :family "Roboto Slab"))
+ doom-theme 'doom-moonlight
+ doom-font (font-spec :family "Iosevka SS08" :size 22 :weight 'semi-light)
+ doom-variable-pitch-font (font-spec :family "Iosevka aile"))
 
-(setq display-line-numbers-type nil)
+(setq display-line-numbers-type 'relative)
 
-(setq org-directory "~/Documents/Delta/")
+(evil-define-key 'normal 'global (kbd ";") 'evil-ex)
+(evil-define-key 'normal 'global (kbd ":") 'evil-repeat-find-char)
+
+(setq org-directory "~/Documents/Notes/Logbook/")
 
 (advice-add 'org-refile :after 'org-save-all-org-buffers)
 
+(use-package! org-journal
+  :config
+  (setq org-journal-dir (concat org-directory "Logs")
+        org-journal-date-prefix "#+TITLE: "
+        org-journal-time-prefix "* "
+        org-journal-date-format "%a, %Y-%m-%d"
+        org-journal-file-format "%Y-%m-%d.org"))
+
+(defun org-journal-find-location ()
+  ;; Open today's journal, but specify a non-nil prefix argument in order to
+  ;; inhibit inserting the heading; org-capture will insert the heading.
+  (org-journal-new-entry t)
+  (unless (eq org-journal-file-type 'daily)
+    (org-narrow-to-subtree))
+  (goto-char (point-max)))
+
+(setq org-capture-templates '(("j" "Journal entry" plain (function org-journal-find-location)
+                               "** %(format-time-string org-journal-time-format)%^{Title}\n%i%?"
+                               :jump-to-captured t :immediate-finish t)))
+
 (after! org
-  (setq org-agenda-files (mapcar
-                          ;; concatenate the path of my org directory to make defining paths easier
-                          (lambda (suffix) (concat org-directory suffix ".org"))
-                          (list "inbox" "agenda" "sprint" "backlog" "later"))
+  (setq org-agenda-files (directory-files org-directory 'full (rx ".org" eos))
         org-todo-keywords '((sequence "IDEA(i)" "PROJECT(p)" "TODO(t)" "NEXT(n)" "WAIT(w)" "BLOCKED(b)" "|" "DONE(d@/!)" "CANCEL(c@/!)"))
-        org-todo-keyword-faces '(("IDEA" . "#EBBF83") ("PROJECT" . "#70E1E8") ("TODO" . "#EBBF83") ("NEXT" . "#8BD49C") ("BLOCKED" . "#D98E48") ("WAIT" . "#41505E") ("CANCEL" . "#D95468"))
+        ;; org-todo-keyword-faces '(("IDEA" . "#EBBF83") ("PROJECT" . "#70E1E8") ("TODO" . "#EBBF83") ("NEXT" . "#8BD49C") ("BLOCKED" . "#D98E48") ("WAIT" . "#41505E") ("CANCEL" . "#D95468"))
+        org-tags-column -77
         org-ellipsis " ▼"
+        org-archive-location "~/Documents/Notes/Logbook/archive/%s::datetree/"
         org-agenda-start-with-log-mode t
         org-log-done 'time
         org-log-into-drawer t
-        org-refile-targets org-agenda-files
+        org-refile-targets '((nil :maxlevel . 9)
+                             (org-agenda-files :maxlevel . 9))
         org-refile-use-outline-path t
         org-outline-path-complete-in-steps nil
         org-refile-allow-creating-parent-nodes t
-        org-capture-templates
-          `(("i" "Inbox" entry (file "inbox.org")
-             ,(concat "* IDEA %?\n" "/Entered on/ %U"))
-            ("@" "Inbox [mu4e]" entry (file "inbox.org")
-             ,(concat "* TODO Process \"%a\" %?\n" "/Entered on/ %U"))
-            ("m" "Meeting" entry (file+headline "agenda.org" "Future")
-             ,(concat "* %? :meeting:\n" "<%<%Y-%m-%d %a %H:00>>"))
-            ("n" "Note" entry (file "notes.org")
-             ,(concat "* Note (%a)\n" "/Entered on/ %U\n" "\n" "%?")))))
+        org-capture-templates '(("j" "Journal entry" plain (function org-journal-find-location)
+                               "* %(format-time-string org-journal-time-format)%^{Title}\n%i%?"
+                               :jump-to-captured t :immediate-finish t))))
 
 (use-package! org-superstar
   :custom
-  (org-superstar-headline-bullets-list '("●" "◎" "○")))
+  (org-superstar-headline-bullets-list '("◉" "○" "✸" "◆" "▶")))
 
 (use-package! org-roam
   :custom
-  (org-roam-directory (concat org-directory "Spells")))
+  (org-roam-directory "~/Documents/Notes/Cortex"))
 
 (use-package! websocket
   :after org-roam)
@@ -69,58 +86,3 @@
           (blue . "#91ddff")
           (violet . "#D4BFFF")
           (magenta . "#F02E6E"))))
-
-;; (setq user-full-name "Stephen Bolton"
-;;       user-mail-address "stephen@bitsonthemind.com")
-
-(auth-source-pass-enable)
-(setq auth-sources '(password-store))
-
-(use-package! mu4e
-  :config
-  ;; (setq message-send-mail-function 'smtpmail-send-it)
-  (setq mu4e-change-filenames-when-moving t)
-  ;; Refresh mail every 10 mins
-  (setq mu4e-update-interval (* 10 60))
-  (setq mu4e-get-mail-command "mbsync -c ~/.config/mbsync/.mbsyncrc -a")
-  (setq mu4e-root-maildir "~/.local/share/Mail")
-  (setq mu4e-context-policy 'ask)
-  (setq mu4e-contexts
-   (list
-    ;; Genesis Block
-    (make-mu4e-context
-     :name "Genesis Block"
-     :match-func
-       (lambda (msg)
-         (when msg
-           (string-prefix-p "/GB" (mu4e-message-field msg :maildir))))
-       :vars '((user-mail-address . "stephen@genesisblock.com")
-               (user-full-name "Stephen Bolton")
-               (smtpmail-default-smtp-server . "smtp.gmail.com")
-               (smtpmail-smtp-user . "stephen@genesisblock.com")
-               (smtpmail-smtp-server . "smtp.gmail.com")
-               (smtpmail-smtp-service . 465)
-               (smtpmail-stream-type . ssl)
-               (user-full-name . "Stephen Bolton")
-               (mu4e-drafts-folder . "/GB/Drafts")
-               (mu4e-sent-folder . "/GB/Sent")
-               (mu4e-refile-folder . "/GB/Archive")
-               (mu4e-trash-folder . "/GB/Trash")))
-    ;; BOTM
-    (make-mu4e-context
-     :name "BOTM"
-     :match-func
-       (lambda (msg)
-         (when msg
-           (string-prefix-p "/BOTM" (mu4e-message-field msg :maildir))))
-       :vars '((user-mail-address . "stephen@bitsonthemind.com")
-               (user-full-name . "Stephen Bolton")
-               (smtpmail-default-smtp-server . "smtp.fastmail.com")
-               (smtpmail-smtp-server . "smtp.fastmail.com")
-               (smtpmail-smtp-user . "stephen@bitsonthemind.com")
-               (smtpmail-smtp-service . 465)
-               (smtpmail-stream-type . ssl)
-               (mu4e-drafts-folder . "/BOTM/Drafts")
-               (mu4e-sent-folder . "/BOTM/Sent")
-               (mu4e-trash-folder . "/BOTM/Trash")
-               (mu4e-refile-folder . "/BOTM/Archive"))))))
