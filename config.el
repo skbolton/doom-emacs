@@ -34,8 +34,7 @@
 
 (after! org
   (setq org-agenda-files (directory-files org-directory 'full (rx ".org" eos))
-        org-todo-keywords '((sequence "IDEA(i)" "PROJECT(p)" "TODO(t)" "NEXT(n)" "WAIT(w)" "BLOCKED(b)" "|" "DONE(d@/!)" "CANCEL(c@/!)"))
-        ;; org-todo-keyword-faces '(("IDEA" . "#EBBF83") ("PROJECT" . "#70E1E8") ("TODO" . "#EBBF83") ("NEXT" . "#8BD49C") ("BLOCKED" . "#D98E48") ("WAIT" . "#41505E") ("CANCEL" . "#D95468"))
+        org-todo-keywords '((sequence "TODO(t)" "NEXT(n)" "WAIT(w)" "BLOCKED(b)" "PR(p)" "|" "DONE(d@/!)" "MERGED(m@/!)" "CANCEL(c@/!)"))
         org-tags-column -77
         org-ellipsis " ▼"
         org-archive-location "~/Documents/Notes/Logbook/archive/%s::datetree/"
@@ -47,6 +46,30 @@
         org-refile-use-outline-path t
         org-outline-path-complete-in-steps nil
         org-refile-allow-creating-parent-nodes t
+        org-agenda-custom-commands
+        '(("g" "Get Things Done (GTD)"
+                ((agenda ""
+                        ((org-agenda-skip-function
+                        '(org-agenda-skip-entry-if 'deadline))
+                        (org-deadline-warning-days 0)))
+                (todo "NEXT"
+                        ((org-agenda-skip-function
+                        '(org-agenda-skip-entry-if 'deadline))
+                        (org-agenda-prefix-format "  %i %-12:c [%e] ")
+                        (org-agenda-max-entries 5)
+                        (org-agenda-overriding-header "\nTasks\n")))
+                (agenda nil
+                        ((org-agenda-entry-types '(:deadline))
+                        (org-agenda-format-date "")
+                        (org-deadline-warning-days 7)
+                        (org-agenda-skip-function
+                        '(org-agenda-skip-entry-if 'notregexp "\\* NEXT"))
+                        (org-agenda-overriding-header "\nDeadlines")))
+                (tags-todo "inbox"
+                        ((org-agenda-prefix-format "  %?-12t% s")
+                        (org-agenda-overriding-header "\nInbox\n")))
+                (tags "CLOSED>=\"<today>\""
+                                ((org-agenda-overriding-header "\nCompleted today\n"))))))
         org-capture-templates '(("j" "Journal entry" plain (function org-journal-find-location)
                                "* %(format-time-string org-journal-time-format)%^{Title}\n%i%?"
                                :jump-to-captured t :immediate-finish t))))
