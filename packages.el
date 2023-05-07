@@ -19,6 +19,8 @@
 (package! org-superstar)
 (package! twilight-bright-theme)
 (package! solo-jazz-theme)
+(package! md-roam
+  :recipe (:host github :repo "nobiot/md-roam"))
 
 ;; If the package you are trying to install does not contain a PACKAGENAME.el
 ;; file, or is located in a subdirectory of the repo, you'll need to specify

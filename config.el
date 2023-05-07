@@ -80,7 +80,20 @@
 
 (use-package! org-roam
   :custom
-  (org-roam-directory "~/Documents/Notes/Cortex"))
+  (org-roam-directory "~/Documents/Notes/Cortex")
+  :config
+  (setq org-roam-file-extensions '("org" "md"))
+  (add-to-list 'org-roam-capture-templates
+    '("m" "Markdown" plain "" :target
+        (file+head "${slug}.md"
+"---\ntitle: ${title}\nid: %<%Y-%m-%dT%H%M%S>\ncategory: []\n---\n")
+    :unnarrowed t)))
+
+(use-package! md-roam
+  :after org-roam
+  :config
+  (md-roam-mode 1)
+  (org-roam-db-autosync-mode 1))
 
 (use-package! websocket
   :after org-roam)
@@ -92,20 +105,7 @@
   ;;         if you don't care about startup time, use
   ;;  :hook (after-init . org-roam-ui-mode)
   :config
-  (setq org-roam-ui-sync-theme t)
-  (setq org-roam-ui-follow t)
-  (setq org-roam-ui-update-on-save t)
-  (setq org-roam-ui-open-on-start t)
-  (setq org-roam-ui-custom-theme
-        '((bg . "#1C1E31")
-          (bg-alt . "#100E23")
-          (fg . "#CBE3E7")
-          (fg-alt . "#8A889D")
-          (red . "#F48FB1")
-          (orange . "#F2B482")
-          (yellow . "#FFE6B3")
-          (green . "#A1EFD3")
-          (cyan . "#63F2F1")
-          (blue . "#91ddff")
-          (violet . "#D4BFFF")
-          (magenta . "#F02E6E"))))
+  (setq org-roam-ui-sync-theme t
+        org-roam-ui-follow t
+        org-roam-ui-update-on-save t
+        org-roam-ui-open-on-start t))
