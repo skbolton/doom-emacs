@@ -36,7 +36,7 @@
   (setq org-agenda-files (directory-files org-directory 'full (rx ".org" eos))
         org-todo-keywords '((sequence "TODO(t)" "NEXT(n)" "WAIT(w)" "BLOCKED(b)" "PR(p)" "|" "DONE(d@/!)" "MERGED(m@/!)" "CANCEL(c@/!)"))
         org-tags-column -77
-        org-ellipsis " ▼"
+        org-ellipsis " ⇲"
         org-archive-location "~/Documents/Notes/Logbook/archive/%s::datetree/"
         org-agenda-start-with-log-mode t
         org-log-done 'time
