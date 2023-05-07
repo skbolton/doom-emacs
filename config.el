@@ -76,7 +76,7 @@
 
 (use-package! org-superstar
   :custom
-  (org-superstar-headline-bullets-list '("◉" "○" "✸" "◆" "▶")))
+  (org-superstar-headline-bullets-list '("❶" "➁" "➂" "➃" "➄" "➅" "➆" "➇" "➈")))
 
 (use-package! org-roam
   :custom
