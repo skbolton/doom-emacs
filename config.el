@@ -1,8 +1,8 @@
 (setq
- doom-theme 'doom-moonlight
- doom-font (font-spec :family "Iosevka SS08" :size 22 :weight 'semi-light)
+ doom-font (font-spec :family "Iosevka SS15" :size 22 :weight 'semi-light)
  doom-variable-pitch-font (font-spec :family "Iosevka aile"))
 
+(load-theme 'solo-jazz t)
 (setq display-line-numbers-type 'relative)
 
 (evil-define-key 'normal 'global (kbd ";") 'evil-ex)
